@@ -21,6 +21,7 @@ requires:
   Lucy: 0.001
   Plack: 0
   Search::OpenSearch::Engine::Lucy: 0.01
+  Search::OpenSearch::Server: 0.01
   Search::Query::Dialect::Lucy: 0.01
   Test::More: 0
   perl: 5.8.3
@@ -29,4 +30,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: git://github.com/karpet/Dezi.git
-version: 0.001001
+version: 0.001002

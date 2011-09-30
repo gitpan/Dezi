@@ -2,7 +2,7 @@ package Dezi;
 use warnings;
 use strict;
 
-our $VERSION = '0.001001';
+our $VERSION = '0.001002';
 
 1;
 
@@ -20,14 +20,14 @@ Start the Dezi server, listening on port 5000:
 
 Add a document B<foo> to the index:
 
- % curl -XPOST http://localhost:5000/foo \
+ % curl http://localhost:5000/index/foo -XPOST \
    -d '<doc><title>bar</title>hello world</doc>' \
    -H 'Content-Type: application/xml'
    
 Search the index:
 
- % curl 'http://localhost:5000/?q=bar&format=json'
- % curl 'http://localhost:5000/?q=bar&format=xml'
+ % curl 'http://localhost:5000/search?q=bar&format=json'
+ % curl 'http://localhost:5000/search?q=bar&format=xml'
 
 =head1 DESCRIPTION
 
