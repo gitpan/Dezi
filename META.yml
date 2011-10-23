@@ -20,9 +20,11 @@ no_index:
 requires:
   Lucy: 0.001
   Plack: 0
-  Search::OpenSearch::Engine::Lucy: 0.01
-  Search::OpenSearch::Server: 0.01
-  Search::Query::Dialect::Lucy: 0.01
+  SWISH::Prog: 0.54
+  Search::OpenSearch: 0.15
+  Search::OpenSearch::Engine::Lucy: 0.05
+  Search::OpenSearch::Server: 0.09
+  Search::Query::Dialect::Lucy: 0.04
   Test::More: 0
   perl: 5.8.3
 resources:
@@ -30,4 +32,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: git://github.com/karpet/Dezi.git
-version: 0.001002
+version: 0.001003
