@@ -6,7 +6,7 @@ use base 'Search::OpenSearch::Server::Plack';
 use JSON;
 use Search::Tools::XML;
 
-our $VERSION = '0.001003';
+our $VERSION = '0.001004';
 
 sub new {
     my ( $class, %args ) = @_;
@@ -25,7 +25,7 @@ sub new {
 }
 
 sub about {
-    my ( $self, $server, $req, $search_path, $index_path ) = @_;
+    my ( $self, $server, $req, $search_path, $index_path, $config ) = @_;
 
     if ( $req->path ne '/' ) {
         my $resp = 'Resource not found';
@@ -58,6 +58,12 @@ sub about {
             : undef
         ),
     };
+    if ( $config->{ui_class} ) {
+        $about->{ui} = $config->{ui_class};
+    }
+    if ( $config->{admin_class} ) {
+        $about->{admin} = $config->{admin_class};
+    }
     my $resp
         = $format eq 'json'
         ? to_json($about)
@@ -81,6 +87,15 @@ sub app {
 
     my $server = $class->new( %$config, search_path => $search_path );
 
+    my $ui;
+    if ( $config->{ui_class} ) {
+        $ui = $config->{ui_class}->new( search_path => $search_path );
+    }
+    my $admin;
+    if ( $config->{admin_class} ) {
+        $admin = $config->{admin_class}->new( $class, $config );
+    }
+
     return builder {
 
         enable "SimpleLogger", level => $config->{'debug'} ? "debug" : "warn";
@@ -89,13 +104,33 @@ sub app {
         mount $search_path => $server;
         mount $index_path  => $server;
 
+        if ($ui) {
+            mount '/ui' => $ui;
+
+            # necessary for Ext callback to work in UI
+            enable "JSONP";
+
+            # TODO hack for Ext uri
+            mount "/resources/images/default/s.gif" => sub {
+                my $req  = Plack::Request->new(shift);
+                my $resp = $req->new_response;
+                $resp->redirect( 'http://dezi.org/ui/example/s.gif', 301 );
+                return $resp->finalize();
+                }
+
+        }
+
+        if ($admin) {
+            mount '/admin' => $admin;
+        }
+
         # default is just self-description
         mount '/' => sub {
             my $req = Plack::Request->new(shift);
-            return $class->about( $server, $req, $search_path, $index_path );
+            return $class->about( $server, $req, $search_path, $index_path,
+                $config );
         };
 
-        # TODO /admin
     };
 
 }

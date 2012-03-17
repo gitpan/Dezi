@@ -3,11 +3,12 @@ abstract: 'search platform based on Apache Lucy, Swish3, Search::OpenSearch and 
 author:
   - 'Peter Karman, C<< <karman at cpan.org> >>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.54
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
+  ExtUtils::MakeMaker: 6.54
 distribution_type: module
-generated_by: 'Module::Install version 0.92'
+dynamic_config: 1
+generated_by: 'Module::Install version 1.04'
 license: http://dev.perl.org/licenses/
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,6 +20,7 @@ no_index:
     - t
 requires:
   Lucy: 0.001
+  Module::Load: 0.22
   Plack: 0
   SWISH::Prog: 0.54
   Search::OpenSearch: 0.15
@@ -32,4 +34,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: git://github.com/karpet/Dezi.git
-version: 0.001003
+version: 0.001004
