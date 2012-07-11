@@ -1,12 +1,12 @@
 package Dezi::Server;
 use warnings;
 use strict;
+use Carp;
 use Plack::Builder;
 use base 'Search::OpenSearch::Server::Plack';
-use JSON;
-use Search::Tools::XML;
+use Dezi::Server::About;
 
-our $VERSION = '0.001004';
+our $VERSION = '0.001005';
 
 sub new {
     my ( $class, %args ) = @_;
@@ -24,64 +24,11 @@ sub new {
     return $class->SUPER::new(%args);
 }
 
-sub about {
-    my ( $self, $server, $req, $search_path, $index_path, $config ) = @_;
-
-    if ( $req->path ne '/' ) {
-        my $resp = 'Resource not found';
-        return [
-            404,
-            [   'Content-Type'   => 'text/plain',
-                'Content-Length' => length $resp,
-            ],
-            [$resp]
-        ];
-    }
-    $server->setup_engine();
-    my $format = lc( $req->parameters->{format}
-            || $server->engine->default_response_format );
-
-    my $uri = $req->uri;
-    $uri =~ s!/$!!;
-
-    my $about = {
-        engine => ref( $server->engine ),
-        search => $uri . $search_path,
-        index  => $uri . $index_path,
-        description =>
-            'This is a Dezi search server. See http://dezi.org/ for more details.',
-        version => $VERSION,
-        fields  => $server->engine->fields,
-        facets  => (
-              $server->engine->facets
-            ? $server->engine->facets->names
-            : undef
-        ),
-    };
-    if ( $config->{ui_class} ) {
-        $about->{ui} = $config->{ui_class};
-    }
-    if ( $config->{admin_class} ) {
-        $about->{admin} = $config->{admin_class};
-    }
-    my $resp
-        = $format eq 'json'
-        ? to_json($about)
-        : Search::Tools::XML->perl_to_xml( $about, 'dezi', 1 );
-    return [
-        200,
-        [   'Content-Type'   => 'application/' . $format,
-            'Content-Length' => length $resp,
-        ],
-        [$resp],
-    ];
-}
-
-sub app {
-    my ( $class, $config ) = @_;
-
+sub parse_dezi_config {
+    my $class       = shift;
+    my $config      = shift or croak "config hashref required";
     my $search_path = delete $config->{search_path} || '/search';
-    my $index_path  = delete $config->{index_path}  || '/index';
+    my $index_path  = delete $config->{index_path} || '/index';
     $search_path = "/$search_path" unless $search_path =~ m!^/!;
     $index_path  = "/$index_path"  unless $index_path  =~ m!^/!;
 
@@ -95,17 +42,30 @@ sub app {
     if ( $config->{admin_class} ) {
         $admin = $config->{admin_class}->new( $class, $config );
     }
+    return {
+        search_path => $search_path,
+        index_path  => $index_path,
+        server      => $server,
+        ui          => $ui,
+        admin       => $admin,
+    };
+}
+
+sub app {
+    my ( $class, $config ) = @_;
+
+    my $dezi_config = $class->parse_dezi_config($config);
 
     return builder {
 
         enable "SimpleLogger", level => $config->{'debug'} ? "debug" : "warn";
 
         # right now these are identical
-        mount $search_path => $server;
-        mount $index_path  => $server;
+        mount $dezi_config->{search_path} => $dezi_config->{server};
+        mount $dezi_config->{index_path}  => $dezi_config->{server};
 
-        if ($ui) {
-            mount '/ui' => $ui;
+        if ( $dezi_config->{ui} ) {
+            mount '/ui' => $dezi_config->{ui};
 
             # necessary for Ext callback to work in UI
             enable "JSONP";
@@ -120,15 +80,21 @@ sub app {
 
         }
 
-        if ($admin) {
-            mount '/admin' => $admin;
+        if ( $dezi_config->{admin} ) {
+            mount '/admin' => $dezi_config->{admin};
         }
 
         # default is just self-description
         mount '/' => sub {
             my $req = Plack::Request->new(shift);
-            return $class->about( $server, $req, $search_path, $index_path,
-                $config );
+            return Dezi::Server::About->new(
+                server      => $dezi_config->{server},
+                request     => $req,
+                search_path => $dezi_config->{search_path},
+                index_path  => $dezi_config->{index_path},
+                config      => $config,
+                version     => $VERSION,
+            );
         };
 
     };
@@ -183,11 +149,10 @@ The Plack::Builder construction, class method. Called within the Plack
 server. Override this method in a subclass to change the basic application
 definition.
 
-=head2 about( I<server>, I<request>, I<search_path>, I<index_path> )
+=head2 parse_dezi_config( I<config> )
 
-Returns Plack-ready response describing the Dezi server. Used
-by Dezi::Client (among others) for interrogating the server about
-service paths, version, etc.
+Returns hashref of values culled from I<config> including a server instance.
+Used internally by app().
 
 =cut
 
