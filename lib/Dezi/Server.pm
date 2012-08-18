@@ -6,7 +6,7 @@ use Plack::Builder;
 use base 'Search::OpenSearch::Server::Plack';
 use Dezi::Server::About;
 
-our $VERSION = '0.001005';
+our $VERSION = '0.001006';
 
 sub new {
     my ( $class, %args ) = @_;
@@ -16,7 +16,7 @@ sub new {
     $engine_config->{type}  ||= 'Lucy';
     $engine_config->{index} ||= ['dezi.index'];
     my $search_path = delete $args{search_path};
-    $engine_config->{link} ||= 'http://localhost:5000' . $search_path;
+    $engine_config->{link} ||= $search_path;
     $engine_config->{default_response_format} ||= 'JSON';
     $engine_config->{debug} = $args{debug};
     $args{engine_config} = $engine_config;
@@ -31,12 +31,14 @@ sub parse_dezi_config {
     my $index_path  = delete $config->{index_path} || '/index';
     $search_path = "/$search_path" unless $search_path =~ m!^/!;
     $index_path  = "/$index_path"  unless $index_path  =~ m!^/!;
+    my $base_uri = delete $config->{base_uri} || '';
 
     my $server = $class->new( %$config, search_path => $search_path );
 
     my $ui;
     if ( $config->{ui_class} ) {
-        $ui = $config->{ui_class}->new( search_path => $search_path );
+        $ui = $config->{ui_class}
+            ->new( search_path => $search_path, base_uri => $base_uri );
     }
     my $admin;
     if ( $config->{admin_class} ) {
@@ -48,6 +50,7 @@ sub parse_dezi_config {
         server      => $server,
         ui          => $ui,
         admin       => $admin,
+        base_uri    => $base_uri,
     };
 }
 
@@ -60,24 +63,15 @@ sub app {
 
         enable "SimpleLogger", level => $config->{'debug'} ? "debug" : "warn";
 
+        enable_if { $_[0]->{REMOTE_ADDR} eq '127.0.0.1' } 
+          "Plack::Middleware::ReverseProxy";
+
         # right now these are identical
         mount $dezi_config->{search_path} => $dezi_config->{server};
         mount $dezi_config->{index_path}  => $dezi_config->{server};
 
         if ( $dezi_config->{ui} ) {
             mount '/ui' => $dezi_config->{ui};
-
-            # necessary for Ext callback to work in UI
-            enable "JSONP";
-
-            # TODO hack for Ext uri
-            mount "/resources/images/default/s.gif" => sub {
-                my $req  = Plack::Request->new(shift);
-                my $resp = $req->new_response;
-                $resp->redirect( 'http://dezi.org/ui/example/s.gif', 301 );
-                return $resp->finalize();
-                }
-
         }
 
         if ( $dezi_config->{admin} ) {
@@ -94,7 +88,15 @@ sub app {
                 index_path  => $dezi_config->{index_path},
                 config      => $config,
                 version     => $VERSION,
+                base_uri    => $dezi_config->{base_uri},
             );
+        };
+
+        mount '/favicon.ico' => sub {
+            my $req = Plack::Request->new(shift);
+            my $res = $req->new_response(301);
+            $res->redirect('http://dezi.org/favicon.ico');
+            $res->finalize();
         };
 
     };
