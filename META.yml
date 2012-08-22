@@ -1,5 +1,5 @@
 ---
-abstract: 'search platform based on Apache Lucy, Swish3, Search::OpenSearch and Plack'
+abstract: 'REST search platform'
 author:
   - 'Peter Karman, C<< <karman at cpan.org> >>'
 build_requires:
@@ -24,9 +24,9 @@ requires:
   Plack: 0
   Plack::Middleware::ReverseProxy: 0
   SWISH::Prog: 0.6
-  Search::OpenSearch: 0.17
-  Search::OpenSearch::Engine::Lucy: 0.09
-  Search::OpenSearch::Server: 0.14
+  Search::OpenSearch: 0.18
+  Search::OpenSearch::Engine::Lucy: 0.1
+  Search::OpenSearch::Server: 0.16
   Search::Query: 0.21
   Search::Query::Dialect::Lucy: 0.05
   Test::More: 0
@@ -36,4 +36,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: http://github.com/karpet/Dezi
-version: 0.001006
+version: 0.001007
