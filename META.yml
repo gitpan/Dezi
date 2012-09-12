@@ -22,11 +22,12 @@ requires:
   Lucy: 0.003002
   Module::Load: 0.22
   Plack: 0
+  Plack::Middleware::Auth::Basic: 0
   Plack::Middleware::ReverseProxy: 0
-  SWISH::Prog: 0.6
+  SWISH::Prog: 0.63
   Search::OpenSearch: 0.2
   Search::OpenSearch::Engine::Lucy: 0.11
-  Search::OpenSearch::Server: 0.17
+  Search::OpenSearch::Server: 0.18
   Search::Query: 0.21
   Search::Query::Dialect::Lucy: 0.05
   Test::More: 0
@@ -36,4 +37,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: http://github.com/karpet/Dezi
-version: 0.001008
+version: 0.002000
