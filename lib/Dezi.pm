@@ -2,7 +2,7 @@ package Dezi;
 use warnings;
 use strict;
 
-our $VERSION = '0.002000';
+our $VERSION = '0.002001';
 
 1;
 
@@ -24,15 +24,19 @@ Add a document B<foo> to the index:
    -d '<doc><title>bar</title>hello world</doc>' \
    -H 'Content-Type: application/xml'
    
-Search the index:
+Search the index for B<bar>:
 
  % curl 'http://localhost:5000/search?q=bar&t=JSON'
  % curl 'http://localhost:5000/search?q=bar&t=XML'
+ 
+Read the usage statement:
+
+ % dezi -h
 
 =head1 DESCRIPTION
 
-Dezi is a search platform based on Apache Lucy, Swish3,
-Search::OpenSearch and Search::Query. 
+Dezi is a search platform based on Apache L<Lucy>, Swish3,
+L<Search::OpenSearch> and L<Search::Query>. 
 
 Dezi integrates several CPAN search libraries into one
 easy-to-use interface.
@@ -52,8 +56,7 @@ the L<Dezi::Server> class documentation
 
 =item
 
-the L<dezi> command line tool perldoc, which includes details
-about the configuration file format.
+the L<Dezi::Architecture>
 
 =item
 
