@@ -18,6 +18,8 @@ no_index:
   directory:
     - inc
     - t
+recommends:
+  LucyX::Suggester: 0.003
 requires:
   Lucy: 0.003002
   Module::Load: 0.22
@@ -25,8 +27,8 @@ requires:
   Plack::Middleware::Auth::Basic: 0
   Plack::Middleware::ReverseProxy: 0
   SWISH::Prog: 0.64
-  Search::OpenSearch: 0.21
-  Search::OpenSearch::Engine::Lucy: 0.12
+  Search::OpenSearch: 0.23
+  Search::OpenSearch::Engine::Lucy: 0.13
   Search::OpenSearch::Server: 0.21
   Search::Query: 0.21
   Search::Query::Dialect::Lucy: 0.05
@@ -37,4 +39,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: http://github.com/karpet/Dezi
-version: 0.002003
+version: 0.002004
