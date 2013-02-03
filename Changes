@@ -58,3 +58,6 @@ Revision history for Dezi
     * fix pod SYNOPSIS for About
     * add require_root param to About->new
 
+0.002006   2 Feb 2013
+    * internal changes to support Dezi::Admin
+    * internal changes to support Dezi::MultiTenant

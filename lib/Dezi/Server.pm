@@ -6,14 +6,21 @@ use Plack::Builder;
 use base 'Search::OpenSearch::Server::Plack';
 use Dezi::Server::About;
 use Dezi::Config;
+use Scalar::Util qw( blessed );
 
-our $VERSION = '0.002005';
+our $VERSION = '0.002006';
 
 sub app {
     my ( $class, $config ) = @_;
 
-    my $dezi_config
-        = Dezi::Config->new( { %$config, server_class => $class } );
+    my $dezi_config;
+    if ( blessed $config) {
+        $dezi_config = $config;
+    }
+    else {
+        $dezi_config
+            = Dezi::Config->new( { %$config, server_class => $class } );
+    }
 
     return builder {
 
@@ -90,8 +97,8 @@ sub app {
 
         mount '/favicon.ico' => sub {
             my $req = Plack::Request->new(shift);
-            my $res = $req->new_response(301);
-            $res->redirect('http://dezi.org/favicon.ico');
+            my $res = $req->new_response();
+            $res->redirect( 'http://dezi.org/favicon.ico', 301 );
             $res->finalize();
         };
 

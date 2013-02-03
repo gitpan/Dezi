@@ -4,6 +4,7 @@ use warnings;
 use strict;
 use Plack::Runner;
 use Module::Load;
+use Data::Dump qw( dump );
 
 our $VERSION = '0.002001';
 
@@ -22,13 +23,13 @@ my $admin_class;
 require Getopt::Long;
 Getopt::Long::Configure( "no_ignore_case", "no_auto_abbrev", "pass_through" );
 Getopt::Long::GetOptions(
-    "preload-app"    => \$preload_app,
-    "dezi-config=s"  => \$dezi_config_file,
-    "ui"             => \$use_ui,
-    "ui-class=s"     => \$ui_class,
-    "admin-class=s"  => \$admin_class,
-    "server-class=s" => \$server_class,
-    "debug"          => \$debug,
+    "preload-app"      => \$preload_app,
+    "dezi-config|dc=s" => \$dezi_config_file,
+    "ui"               => \$use_ui,
+    "ui-class=s"       => \$ui_class,
+    "admin-class=s"    => \$admin_class,
+    "server-class=s"   => \$server_class,
+    "debug"            => \$debug,
 );
 
 my @args = (
@@ -39,9 +40,6 @@ my @args = (
 if ( !$preload_app ) {
     push @args, 'loader' => 'Delayed';
 }
-
-eval { load $server_class };
-die $@ if $@;
 
 my $config = {};
 if ($dezi_config_file) {
@@ -60,6 +58,18 @@ if ($use_ui) {
 $config->{ui_class}    ||= $ui_class;
 $config->{admin_class} ||= $admin_class;
 
+my @argv = @ARGV;
+
+#dump \@argv;
+
+my $runner = Plack::Runner->new(@args);
+$runner->parse_options(@argv);
+$runner->set_options( argv => \@argv );
+$runner->setup();    # pull in -I includes, etc for load() below
+
+eval { load $server_class };
+die $@ if $@;
+
 if ( $config->{ui_class} ) {
     eval { load $config->{ui_class} };
     die $@ if $@;
@@ -71,11 +81,7 @@ if ( $config->{admin_class} ) {
 
 my $app = $server_class->app($config);
 
-my @argv = @ARGV;
-
-my $runner = Plack::Runner->new(@args);
-$runner->parse_options(@argv);
-$runner->set_options( argv => \@argv );
+# final step
 $runner->run($app);
 
 __END__
