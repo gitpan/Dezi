@@ -12,6 +12,7 @@ use Plack::Util::Accessor qw(
     admin_path
     ui
     admin
+    admin_class
     debug
     base_uri
     search_server
@@ -19,7 +20,7 @@ use Plack::Util::Accessor qw(
     authenticator
 );
 
-our $VERSION = '0.002007';
+our $VERSION = '0.002008';
 
 sub new {
     my $class         = shift;
@@ -86,6 +87,7 @@ sub new {
         admin_path    => $admin_path,
         ui            => $ui,
         admin         => $admin,
+        admin_class   => $config->{admin_class},
         base_uri      => $base_uri,
         search_server => $search_server,
         index_server  => $index_server,
