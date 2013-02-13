@@ -26,8 +26,9 @@ requires:
   Plack: 0
   Plack::Middleware::Auth::Basic: 0
   Plack::Middleware::ReverseProxy: 0
+  SWISH::3: 1.000006
   SWISH::Prog: 0.7
-  SWISH::Prog::Lucy: 0.15
+  SWISH::Prog::Lucy: 0.16
   Search::OpenSearch: 0.23
   Search::OpenSearch::Engine::Lucy: 0.13
   Search::OpenSearch::Server: 0.21
@@ -41,4 +42,4 @@ resources:
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: http://github.com/karpet/Dezi
-version: 0.002009
+version: 0.002010
