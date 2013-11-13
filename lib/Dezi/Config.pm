@@ -20,7 +20,7 @@ use Plack::Util::Accessor qw(
     authenticator
 );
 
-our $VERSION = '0.002010';
+our $VERSION = '0.002011';
 
 sub new {
     my $class         = shift;
@@ -224,6 +224,12 @@ Dezi::Config - Dezi server configuration
         searcher_config => {
             max_hits             => 1000,
             find_relevant_fields => 1,
+            qp_config => {
+                dialect   => 'Lucy',
+                null_term => 'NULL',
+                # see Search::Query::Parser and Search::Query::Dialect::Lucy
+                # for full list of options
+            },
         },
 
         # see LucyX::Suggester
