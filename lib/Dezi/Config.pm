@@ -2,6 +2,7 @@ package Dezi::Config;
 use strict;
 use warnings;
 use Carp;
+use Data::Dump qw( dump );
 use Module::Load;
 use Plack::Util::Accessor qw(
     search_path
@@ -20,7 +21,7 @@ use Plack::Util::Accessor qw(
     authenticator
 );
 
-our $VERSION = '0.002011';
+our $VERSION = '0.002012';
 
 sub new {
     my $class         = shift;
@@ -78,7 +79,7 @@ sub new {
         );
     }
 
-    return bless {
+    my $self = bless {
         search_path   => $search_path,
         index_path    => $index_path,
         commit_path   => $commit_path,
@@ -101,6 +102,10 @@ sub new {
             : undef,
         ),
     }, $class;
+
+    $self->debug and carp dump $self;
+
+    return $self;
 }
 
 sub apply_default_engine_config {
@@ -141,14 +146,14 @@ Dezi::Config - Dezi server configuration
     commit_path     => '/commit',
     rollback_path   => '/rollback',
     ui_path         => '/ui',
-    admin_path      => '/admin',
     ui_class        => 'Dezi::UI',
     # or
     # ui              => Dezi::UI->new()
-    
-    # NOT YET SUPPORTED
-    #admin_class     => 'Dezi::Admin',
-    #admin           => Dezi::Admin->new(),
+   
+    admin_path      => '/admin', 
+    admin_class     => 'Dezi::Admin',
+    # or
+    # admin           => Dezi::Admin->new(),
     
     base_uri        => '',
     server_class    => 'Dezi::Server',
@@ -268,6 +273,9 @@ Dezi::Config - Dezi server configuration
 
         # see Search::Tools::QueryParser
         parser_config => {},
+
+        # see Search::OpenSearch::Engine::Lucy
+        auto_commit => 1, # set to 0 to enable transactions with /commit and /rollback
 
     }
  
