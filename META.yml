@@ -8,7 +8,7 @@ configure_requires:
   ExtUtils::MakeMaker: 6.59
 distribution_type: module
 dynamic_config: 1
-generated_by: 'Module::Install version 1.06'
+generated_by: 'Module::Install version 1.08'
 license: http://dev.perl.org/licenses/
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,27 +19,29 @@ no_index:
     - inc
     - t
 recommends:
-  LucyX::Suggester: 0.003
+  LucyX::Suggester: '0.003'
 requires:
+  Class::Load: 0
   Lucy: 0.003002
-  Module::Load: 0.22
+  Moose: 0
   Plack: 0
   Plack::Middleware::Auth::Basic: 0
   Plack::Middleware::ReverseProxy: 0
-  SWISH::3: 1.000006
+  SWISH::3: '1.000009'
   SWISH::Prog: 0.7
   SWISH::Prog::Lucy: 0.16
-  Search::OpenSearch: 0.23
-  Search::OpenSearch::Engine::Lucy: 0.13
-  Search::OpenSearch::Server: 0.21
-  Search::Query: 0.21
-  Search::Query::Dialect::Lucy: 0.05
-  Search::Tools: 0.87
+  Search::OpenSearch: '0.400'
+  Search::OpenSearch::Engine::Lucy: '0.300'
+  Search::OpenSearch::Server: '0.300'
+  Search::Query: '0.300'
+  Search::Query::Dialect::Lucy: '0.200'
+  Search::Tools: '1.000'
   Test::More: 0
+  Type::Tiny: 0
   perl: 5.8.3
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Dezi
   homepage: https://github.com/karpet/Dezi
   license: http://opensource.org/licenses/gpl-license.php
   repository: http://github.com/karpet/Dezi
-version: 0.002012
+version: 0.002998_01

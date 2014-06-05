@@ -1,14 +1,13 @@
 package Dezi::Server;
-use warnings;
-use strict;
+use Moose;
+extends 'Search::OpenSearch::Server::Plack';
 use Carp;
 use Plack::Builder;
-use base 'Search::OpenSearch::Server::Plack';
 use Dezi::Server::About;
 use Dezi::Config;
 use Scalar::Util qw( blessed );
 
-our $VERSION = '0.002012';
+our $VERSION = '0.002998_01';
 
 sub app {
     my ( $class, $config ) = @_;
@@ -30,14 +29,15 @@ sub app {
         enable_if { $_[0]->{REMOTE_ADDR} eq '127.0.0.1' }
         "Plack::Middleware::ReverseProxy";
 
-        mount $dezi_config->search_path() => $dezi_config->search_server;
-        mount $dezi_config->index_path()  => builder {
+        mount $dezi_config->search_path() =>
+            $dezi_config->search_server->to_app;
+        mount $dezi_config->index_path() => builder {
             if ( defined $dezi_config->authenticator ) {
                 enable "Auth::Basic",
                     authenticator => $dezi_config->authenticator,
                     realm         => 'Dezi Indexer';
             }
-            $dezi_config->index_server;
+            $dezi_config->index_server->to_app;
         };
         mount $dezi_config->commit_path() => builder {
             if ( defined $dezi_config->authenticator ) {
@@ -69,7 +69,7 @@ sub app {
         };
 
         if ( $dezi_config->ui ) {
-            mount $dezi_config->ui_path() => $dezi_config->ui;
+            mount $dezi_config->ui_path() => $dezi_config->ui->to_app;
         }
 
         if ( $dezi_config->admin ) {
