@@ -7,7 +7,7 @@ use Dezi::Server::About;
 use Dezi::Config;
 use Scalar::Util qw( blessed );
 
-our $VERSION = '0.003000';
+our $VERSION = '0.004000';
 
 sub app {
     my ( $class, $config ) = @_;
@@ -153,6 +153,9 @@ Class method that uses L<Plack::Builder> to construct the server
 application. I<config> should be a hashref that is converted
 internally to a L<Dezi::Config> object.
 
+Read the L<Dezi::Config> documentation for full reference of all
+options available in I<config>.
+
 Returns the Plack $app via the L<Plack::Builder> builder() function.
 
 =head1 AUTHOR
@@ -218,7 +221,7 @@ See http://dev.perl.org/licenses/ for more information.
 
 =head1 SEE ALSO
 
-L<Search::OpenSearch>, L<SWISH::3>, L<SWISH::Prog::Lucy>,
+L<Search::OpenSearch>, L<SWISH::3>, L<Dezi::App>,
 L<Plack>, L<Lucy>
 
 =cut
