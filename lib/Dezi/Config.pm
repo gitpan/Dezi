@@ -46,7 +46,7 @@ has 'index_server' => (
 has 'authenticator' => ( is => 'rw', isa => Maybe [CodeRef] );
 has 'server_config' => ( is => 'rw', isa => HashRef );
 
-our $VERSION = '0.004000';
+our $VERSION = '0.004001';
 
 sub init_ui {
     my $self = shift;
@@ -114,7 +114,7 @@ sub BUILDARGS {
         )
     {
         if ( exists $args{$p} ) {
-            $args{$p} = "/$args{$p}" unless $args{$p} =~ m!^/!;
+            $args{$p} = "/$args{$p}" unless $args{$p} =~ m!^(/|https?:)!;
         }
     }
     return \%args;
